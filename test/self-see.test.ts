@@ -2,14 +2,14 @@ import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, expectTypeOf, test } from "vitest";
 import {
   assertSelfSee,
   injectObservation,
   loadSourceTree,
   tailRuntimeLog,
 } from "../src/index.ts";
-import type { LogEvent, SourceHit } from "../src/index.ts";
+import type { LogEvent, LogHit, LogTail, SourceHit } from "../src/index.ts";
 
 const fixtureRoot = fileURLToPath(
   new URL("../fixtures/toy-tree", import.meta.url),
@@ -273,7 +273,8 @@ describe("injectObservation", () => {
       "tailRuntimeLog",
     ]);
   });
-});
 
-// @ts-expect-error LogTail is not a LogHit
-injectObservation({ user: "x" }, hit, tailRuntimeLog([a]));
+  test("LogTail is not a LogHit", () => {
+    expectTypeOf<LogTail>().not.toExtend<LogHit>();
+  });
+});
